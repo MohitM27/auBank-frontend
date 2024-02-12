@@ -10,7 +10,7 @@ function Dashboard() {
     <div className="wrapper">
       <Navbar userName={userName} theme={theme}/>
       <Sidebar theme={theme} setTheme={setTheme}/>
-      <MainContent setuserName={setuserName}/>
+      <MainContent setuserName={setuserName} theme={theme}/>
     </div>
   );
 }

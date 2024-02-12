@@ -2,8 +2,17 @@ import React, { useEffect, useState } from "react";
 import { Form } from "react-bootstrap";
 import { dateFormat, getDates } from "../lib/common";
 
-const Filter = ({ setFilteredSales,setuserName, setCitiesSales, 
-  setCities }) => {
+const Filter = ({
+  setFilteredSales,
+  setuserName,
+  setCitiesSales,
+  setCities,
+  setProducts,
+  setSubCategory,
+  setCategorys,
+  setSegments,
+  theme
+}) => {
   const [selectedState, setSelectedState] = useState("");
   const [fromTime, setFromTime] = useState("");
   const [toTime, setToTime] = useState("");
@@ -15,7 +24,7 @@ const Filter = ({ setFilteredSales,setuserName, setCitiesSales,
     if (data.length === 0) {
       fetchState();
     }
-  }, []);
+  }, [data.length]);
   const fetchState = async () => {
     try {
       const response = await fetch(`http://localhost:5000/api/states`);
@@ -50,7 +59,13 @@ const Filter = ({ setFilteredSales,setuserName, setCitiesSales,
   };
 
   useEffect(() => {
-    if (selectedState !== "") {
+    if (
+      selectedState !== "" &&
+      fromTime !== "" &&
+      toTime !== "" &&
+      fromTime !== "Invalid date" &&
+      toTime !== "Invalid date"
+    ) {
       fetchCardData();
     }
   }, [selectedState, fromTime, toTime]);
@@ -66,13 +81,16 @@ const Filter = ({ setFilteredSales,setuserName, setCitiesSales,
         `http://localhost:5000/api/dashboard?${new URLSearchParams(params)}`
       );
       const jsonData = await response.json();
-      setuserName(jsonData.data.customerName)
-      if (jsonData?.data?.filteredSales) {
+      if (jsonData?.status === 200) {
+        setuserName(jsonData.data.customerName);
         setFilteredSales(jsonData.data.filteredSales);
+        setCities(jsonData?.data?.totalSalesByCity.map((el) => el.name));
+        setCitiesSales(jsonData?.data?.totalSalesByCity.map((el) => el.value));
+        setProducts(jsonData?.data?.totalSalesByProductName);
+        setSubCategory(jsonData?.data?.totalSalesBySubCategory);
+        setCategorys(jsonData?.data?.totalSalesByCategory);
+        setSegments(jsonData?.data?.totalSalesBySegment);
       }
-      setCities(Object.keys(jsonData.data.totalSalesByCity));
-      setCitiesSales(Object.entries(jsonData.data.totalSalesByCity))
-
     } catch (error) {
       console.error("Error fetching data:", error);
     }
@@ -86,7 +104,7 @@ const Filter = ({ setFilteredSales,setuserName, setCitiesSales,
   return (
     <div className="float-sm-right d-flex gap-4">
       <div>
-        <Form.Group>
+        <Form.Group className={theme ? "bg-light text-dark" : "bg-dark text-light"}>
           <Form.Label>Select a state</Form.Label>
           <Form.Select
             value={selectedState}
@@ -97,15 +115,25 @@ const Filter = ({ setFilteredSales,setuserName, setCitiesSales,
         </Form.Group>
       </div>
       <div>
-        <Form.Group>
+        <Form.Group className={theme ? "bg-light text-dark" : "bg-dark text-light"}>
           <Form.Label>Select from Date</Form.Label>
-          <Form.Select value={fromTime}>{getOptions(fromDate)}</Form.Select>
+          <Form.Select
+            value={fromTime}
+            onChange={(e) => setFromTime(e.target.value)}
+          >
+            {getOptions(fromDate)}
+          </Form.Select>
         </Form.Group>
       </div>
       <div>
-        <Form.Group>
+        <Form.Group className={theme ? "bg-light text-dark" : "bg-dark text-light"}>
           <Form.Label>Select to Date</Form.Label>
-          <Form.Select value={toTime}>{getOptions(toDate)}</Form.Select>
+          <Form.Select
+            value={toTime}
+            onChange={(e) => setToTime(e.target.value)}
+          >
+            {getOptions(toDate)}
+          </Form.Select>
         </Form.Group>
       </div>
     </div>

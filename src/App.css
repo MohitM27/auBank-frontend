@@ -1,3 +1,13 @@
-.lightTheme{
+.lightTheme {
   background: #0c6470 !important;
+}
+.productDesc {
+  font-weight: 600;
+}
+.productTitle {
+  background: #d6eff3;
+}
+.productText {
+  background: #8bd0e0;
+  text-align: end;
 }

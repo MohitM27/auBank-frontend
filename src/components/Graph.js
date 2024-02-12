@@ -1,9 +1,9 @@
 import React from "react";
 import ReactEcharts from "echarts-for-react"; 
-const Graph=({cities, citiesSales})=> {  
+const Graph=({title, category, values})=> {  
 const option = {
     title: {
-      text: 'Sales By City'
+      text:title
     },
     tooltip: {
       trigger: 'axis',
@@ -24,13 +24,12 @@ const option = {
     },
     yAxis: {
       type: 'category',
-      data: cities
+      data: category
     },
     series: [
       {
-        // name: '2011',
         type: 'bar',
-        data: citiesSales
+        data: values
       }
     ]
   }; 
